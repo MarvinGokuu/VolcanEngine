@@ -1,0 +1,44 @@
+================================================================================
+            VOLCAN ENGINE - MANIFIESTO DE PROTOCOLO SOBERANO (V4.3)
+================================================================================
+
+Bienvenido al ecosistema VOLCAN, la infraestructura de renderizado nativo y 
+control temporal de alto rendimiento para sistemas de misión crítica.
+
+1. ARQUITECTURA DE SOBERANÍA (ATOMIC IGNITION)
+-----------------------------
+VOLCAN opera bajo el patrón de "Memoria Soberana" y "Despacho Atómico".
+- **Estado**: Todo reside en `WorldStateFrame` (Off-Heap Memory).
+- **Señales**: Todo evento es un `long` (64 bits) en el `VolcanAtomicBus`.
+- **Lógica**: Sistemas puros que iteran sobre memoria nativa (`SovereignSystem`).
+
+2. UNIDADES DE INFRAESTRUCTURA
+-------------------------------
+- **SovereignKernel**: Orquestador del loop de 4 fases (60 FPS fijos).
+- **VolcanAtomicBus**: RingBuffer Lock-Free para transporte de señales.
+- **VolcanSectorManager**: Gestión espacial AAA con bit-packing.
+- **VolcanEventDispatcher**: Distribuidor multi-carril (Lane Architecture).
+
+3. LEYES DE OPTIMIZACIÓN (SIMPATÍA MECÁNICA)
+---------------------------------------------
+1. **Zero-Allocation**: Prohibido crear objetos en el Hot-Path.
+2. **Data Locality**: Acceso secuencial a memoria (`EntityLayout` con Stride).
+3. **Atomic Signals**: Prohibido el uso de Strings para eventos internos.
+4. **Determinismo**: Mismo Seed + Input = Mismo Resultado Bit-Perfect.
+
+4. MATEMÁTICAS Y ESTÁNDARES
+----------------------------
+- **Primitivos (long/int)**: Reservados para matemáticas de alto rendimiento (Sectores, Hash).
+- **Objetos**: Permitidos solo en inicialización (Cold-Path) y herramientas.
+- **SovereignSpaceMath**: (Planificado) Utilidad central para cálculo de rejillas 3D.
+
+5. PROTOCOLO DE IGNICIÓN (DEPLOYMENT)
+--------------------------------------
+Usa 'SovereignProtocol.bat' para compilación estricta.
+- El Kernel debe compilar sin advertencias.
+- Los componentes "Noise" deben ser neutralizados antes del arranque.
+
+================================================================================
+Estado: CERTIFICADO PARA PRODUCCIÓN (V4.3)
+Autoridad: MarvinDev & Volcan Sovereignty Team
+================================================================================
