@@ -43,6 +43,96 @@ Cada componente crítico debe incluir bloques de documentación con los siguient
 - **Evitar**: Referencias innecesarias, lenguaje coloquial
 - **Formato**: Comentarios concisos, directos, técnicamente precisos
 
+### 1.4 Licencia y Certificación AAA+
+
+**Anotación @AAACertified**: Marca componentes certificados bajo el estándar AAA+
+
+**Overhead**: 0ns (RetentionPolicy.SOURCE - eliminada en bytecode)
+
+**Uso Obligatorio**: Todos los componentes críticos (Bus, Kernel, Memory, Systems)
+
+**Formato Estándar** (NUEVO - 2026-01-06):
+
+```java
+import sv.volcan.core.AAACertified;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CERTIFICACIÓN AAA+ - [NOMBRE DEL COMPONENTE]
+// ═══════════════════════════════════════════════════════════════════════════════
+//
+// PORQUÉ:
+// - Explicar la razón de cada parámetro de la anotación
+// - Justificar las decisiones de diseño
+// - Documentar el impacto en rendimiento
+//
+// TÉCNICA:
+// - maxLatencyNs: [valor] = [explicación técnica]
+// - minThroughput: [valor] = [explicación técnica]
+// - alignment: [valor] = [explicación técnica]
+// - lockFree: [true/false] = [explicación técnica]
+// - offHeap: [true/false] = [explicación técnica]
+//
+// GARANTÍA:
+// - Esta anotación NO afecta el rendimiento en runtime
+// - Solo documenta las métricas esperadas del componente
+// - Validable con herramientas estáticas en build-time
+//
+@AAACertified(
+    date = "YYYY-MM-DD",
+    maxLatencyNs = [valor],
+    minThroughput = [valor],
+    alignment = [valor],
+    lockFree = [true/false],
+    offHeap = [true/false],
+    notes = "[Descripción concisa del componente]"
+)
+public final class ComponentName {
+    // ...
+}
+```
+
+**Ejemplo Completo** (TimeKeeper):
+
+```java
+import sv.volcan.core.AAACertified;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CERTIFICACIÓN AAA+ - NEURONA SENSORIAL TEMPORAL
+// ═══════════════════════════════════════════════════════════════════════════════
+//
+// PORQUÉ:
+// - La anotación @AAACertified documenta las garantías de rendimiento inline
+// - RetentionPolicy.SOURCE = 0ns overhead (eliminada en bytecode)
+// - Metadata visible para humanos, invisible para la JVM
+//
+// TÉCNICA:
+// - maxLatencyNs: 1 = Lectura directa del TSC (Time Stamp Counter)
+// - minThroughput: 60 = Fixed timestep a 60 FPS
+// - alignment: 64 = Cache line alignment para evitar False Sharing
+// - lockFree: true = Sin synchronized, solo operaciones atómicas
+// - offHeap: false = TimeKeeper vive en heap (no requiere memoria nativa)
+//
+// GARANTÍA:
+// - Esta anotación NO afecta el rendimiento en runtime
+// - Solo documenta las métricas esperadas del componente
+// - Validable con herramientas estáticas en build-time
+//
+@AAACertified(
+    date = "2026-01-06",
+    maxLatencyNs = 1,
+    minThroughput = 60,
+    alignment = 64,
+    lockFree = true,
+    offHeap = false,
+    notes = "Sensory neuron - TSC-based temporal determinism at 60 FPS"
+)
+public final class TimeKeeper {
+    // ...
+}
+```
+
+
+
 ---
 
 ## 2. Métricas de Rendimiento
