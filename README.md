@@ -227,4 +227,4 @@ Ver: [`brain/LISTA_PENDIENTES.md`](brain/LISTA_PENDIENTES.md)
 
 **Versión**: 1.0  
 **Última Actualización**: 2026-01-11
-**Licencia**: Propietaria (AAA+ Certified Infrastructure)
+**Licencia**: MIT License

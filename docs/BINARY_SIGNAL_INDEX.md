@@ -112,6 +112,14 @@ Todas las señales en el Volcan Atomic Bus cumplen con la arquitectura de 64 bit
 | `0x8020` | `MEMORY_PREFETCH_ENABLE` | `BufID` | Activar prefetch HW. |
 | `0x8021` | `MEMORY_PREFETCH_DISABLE` | `BufID` | Desactivar prefetch. |
 
+### ACCELERATOR (0x9000 - 0x9FFF)
+| ID Hex | Nombre | Payload | Descripción |
+| :--- | :--- | :--- | :--- |
+| `0x9001` | `ACCEL_IGNITE_SIMD` | `LaneWidth` | Inicia processing vectorial. |
+| `0x9002` | `ACCEL_VECTOR_REDUCE` | `MemPtr` | Reducción (Suma). |
+| `0x9003` | `ACCEL_VECTOR_TRANSFORM`| `MemPtr` | Transformación. |
+| `0x9004` | `ACCEL_DUMP_STATS` | `0` | Reporte throughput. |
+
 ---
 
 ## 3. Mapa de Memoria (VolcanStateLayout)

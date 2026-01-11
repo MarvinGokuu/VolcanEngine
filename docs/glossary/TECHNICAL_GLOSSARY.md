@@ -733,6 +733,13 @@
 **Características**: Métodos especializados, batch operations, edge computing  
 **Capacidad**: 65536 slots (2^16)
 
+### VolcanDataAccelerator
+**Categoría**: Clase (Core)
+**Archivo**: [VolcanDataAccelerator.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/core/VolcanDataAccelerator.java)
+**Propósito**: Procesamiento de datos masivos mediante SIMD (Single Instruction, Multiple Data).
+**Características**: Java Vector API, Off-Heap Memory, Lock-Free.
+**Rendimiento**: >4 GB/s (Limitado por RAM bandwidth).
+
 ### VolcanSignalPacker
 **Categoría**: Clase  
 **Archivo**: [VolcanSignalPacker.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/VolcanSignalPacker.java)  
