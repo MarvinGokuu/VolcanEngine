@@ -1,12 +1,11 @@
-# Glosario Técnico - Volcan Engine
+# Glosario Técnico - Volcan Engine (AAA+)
 
 ## Autoridad
-
-**Documento**: Glosario Técnico Completo  
-**Nivel**: AAA+ Kernel Engineering  
-**Versión**: 1.0  
-**Fecha**: 2026-01-05  
-**Propósito**: Referencia exhaustiva de tecnologías, métodos, archivos, variables y conceptos del motor Volcan
+**Documento**: Glosario Técnico Completo (Magna Carta Compliant)
+**Nivel**: AAA+ Kernel Engineering
+**Versión**: 2.0
+**Fecha**: 2026-01-10
+**Propósito**: Referencia exhaustiva de tecnologías, métodos, archivos, variables y conceptos del motor Volcan. Certificado para Zero-Allocation y High-Performance.
 
 ---
 
@@ -319,6 +318,12 @@
 ---
 
 ## J
+
+### Jarvis (MarvinDev OS)
+**Categoría**: Identidad del Sistema
+**Definición**: Evolución del Volcan Engine hacia un Sistema Operativo Soberano con capacidades de voz e interacción móvil.
+**Componentes**: JarvisVoiceInterface, JarvisMobileConnector.
+**Estado**: Activo (AAA+ Certified).
 
 ### JIT (Just-In-Time Compiler)
 **Categoría**: JVM  
@@ -735,6 +740,15 @@
 **Características**: Zero-heap, O(1), determinismo binario  
 **Formatos**: 32+32, floats, 3D, GUIDs, punteros, señales atómicas
 
+## W
+
+### WhatsApp Bridge
+**Categoría**: Componente (Jarvis)
+**Definición**: Puente neuronal para mensajería crítica bidireccional a través de API externa.
+**Dependencias**: JarvisMobileConnector
+**Métrica**: Latencia < 200ms
+**Archivo**: [WhatsAppBridge.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/jarvis/WhatsAppBridge.java)
+
 ---
 
 ## Z
@@ -798,6 +812,38 @@
 - 299,792,458 m/s
 - En 150ns: ~45 metros
 - Objetivo: Operación más rápida que la luz cruzando un edificio
+
+---
+
+## Orden de Lectura Binario (Dependency Index)
+
+Cada archivo fuente posee un encabezado `// Reading Order: [BINARY_ID]` que establece su posición en la jerarquía de carga mental y compilación. Los imports están comentados con el ID binario de la dependencia.
+
+| Binario | Decimal | Archivo |
+| :--- | :--- | :--- |
+| `00000001` | 1 | `VolcanStateLayout.java` |
+| `00000010` | 2 | `VolcanSignalCommands.java` |
+| `00000011` | 3 | `IEventBus.java` |
+| `00000100` | 4 | `AAACertified.java` |
+| `00000101` | 5 | `VolcanSignalPacker.java` |
+| `00000110` | 6 | `VolcanAtomicBus.java` |
+| `00000111` | 7 | `VolcanRingBus.java` |
+| `00001000` | 8 | `VolcanSignalDispatcher.java` |
+| `00001001` | 9 | `KernelControlRegister.java` |
+| `00001010` | 10 | `SovereignKernel.java` |
+| `00001011` | 11 | `SystemRegistry.java` |
+| `00001100` | 12 | `UltraFastBootSequence.java` |
+| `00001101` | 13 | `SystemDependencyGraph.java` |
+| `00001110` | 14 | `ParallelSystemExecutor.java` |
+| `00001111` | 15 | `ThreadPinning.java` |
+| `00010000` | 16 | `TimeKeeper.java` |
+| `00010001` | 17 | `MetricsPacker.java` |
+| `00010010` | 18 | `VolcanSector.java` |
+| `00010011` | 19 | `VolcanSectorManager.java` |
+| `00010100` | 20 | `VolcanNativeConsole.java` |
+| `00010101` | 21 | `VolcanSystemProbe.java` |
+| `00010110` | 22 | `VolcanMetricsServer.java` |
+| `00010111` | 23 | `VolcanNetworkRelay.java` |
 
 ---
 
