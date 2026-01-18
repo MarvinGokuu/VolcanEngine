@@ -1,32 +1,36 @@
-# 🚀 QUICK REFERENCE GUIDE - Certificación AAA+
+# AAA_CERTIFICATION_REFERENCE_GUIDE
 
-## 📋 Template Copiable
+**Subsistema**: Assurance / Certification
+**Tecnología**: Java Annotations
+**Estado**: Active Reference
+**Autoridad**: System Architect
+
+---
+
+## 1. Patrón de Documentación (Template)
 
 ```java
 import sv.volcan.core.AAACertified;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// CERTIFICACIÓN AAA+ - [NOMBRE DEL COMPONENTE EN MAYÚSCULAS]
+// CERTIFICACION AAA+ - [COMPONENT_ID]
 // ═══════════════════════════════════════════════════════════════════════════════
 //
-// PORQUÉ:
-// - La anotación @AAACertified documenta las garantías de rendimiento inline
-// - RetentionPolicy.SOURCE = 0ns overhead (eliminada en bytecode)
-// - Metadata visible para humanos, invisible para la JVM
-// - [Explicar qué hace este componente en el contexto del motor]
+// PROPOSITO:
+// - La anotación @AAACertified documenta garantías de rendimiento.
+// - RetentionPolicy.SOURCE = 0ns overhead (invisible en bytecode).
+// - Validable mediante análisis estático.
 //
-// TÉCNICA:
-// - maxLatencyNs: [valor] = [Explicación técnica de por qué este valor]
-// - minThroughput: [valor] = [Explicación técnica de por qué este valor]
-// - alignment: [valor] = [Explicación técnica de alineación de memoria]
-// - lockFree: [true/false] = [Explicación de concurrencia]
-// - offHeap: [true/false] = [Explicación de gestión de memoria]
+// ESPECIFICACION TECNICA:
+// - maxLatencyNs: [valor] = [Justificación de hardware/silicio]
+// - minThroughput: [valor] = [Justificación de ancho de banda]
+// - alignment: [valor] = [Justificación de padding de memoria]
+// - lockFree: [true/false] = [Mecanismo de concurrencia]
+// - offHeap: [true/false] = [Región de memoria]
 //
-// GARANTÍA:
-// - Esta anotación NO afecta el rendimiento en runtime
-// - Solo documenta las métricas esperadas del componente
-// - Validable con herramientas estáticas en build-time
-// - Overhead medido: 0ns (confirmado con javap)
+// GARANTIA:
+// - Sin impacto en runtime (Zero-Overhead).
+// - Contrato verificable en tiempo de compilación.
 //
 @AAACertified(
     date = "YYYY-MM-DD",
@@ -35,7 +39,7 @@ import sv.volcan.core.AAACertified;
     alignment = [valor],
     lockFree = [true/false],
     offHeap = [true/false],
-    notes = "[Descripción concisa del componente]"
+    notes = "[Descripción técnica del componente]"
 )
 public final class ComponentName {
     // ...
@@ -44,64 +48,61 @@ public final class ComponentName {
 
 ---
 
-## 📊 Valores Comunes
+## 2. Estándares de Métricas
 
-### **Latencia (maxLatencyNs)**
+### Latencia (maxLatencyNs)
 
-| Componente | Valor | Justificación |
-|------------|-------|---------------|
-| **TimeKeeper** | 1 | Lectura directa del TSC (Time Stamp Counter) |
-| **VolcanAtomicBus** | 150 | VarHandles con Acquire/Release |
-| **VolcanRingBus** | 150 | VarHandles con Acquire/Release |
-| **VolcanStateVault** | 150 | Acceso off-heap directo |
-| **SovereignKernel** | 16_666_000 | Fixed timestep a 60 FPS (16.666ms) |
+| Componente | Valor (ns) | Justificación Técnica |
+| :--- | :--- | :--- |
+| **Time Source** | 1 | Lectura directa de registro CPU (TSC) |
+| **Event Bus** | 150 | Barreras de memoria (Acquire/Release) |
+| **Memory Access** | 150 | Acceso directo a memoria Off-Heap |
+| **Kernel Loop** | 16,666,000 | Ciclo determinista (60 Hz) |
 
-### **Throughput (minThroughput)**
+### Throughput (minThroughput)
 
-| Componente | Valor | Justificación |
-|------------|-------|---------------|
-| **TimeKeeper** | 60 | 60 FPS (frames por segundo) |
-| **VolcanAtomicBus** | 10_000_000 | 10M eventos/segundo (batch) |
-| **VolcanRingBus** | 10_000_000 | 10M eventos/segundo (batch) |
-| **SovereignKernel** | 60 | 60 frames por segundo |
+| Componente | Valor | Unidad | Justificación |
+| :--- | :--- | :--- | :--- |
+| **Time Source** | 60 | FPS | Sincronización de cuadro |
+| **Event Bus** | 10,000,000 | Ops/s | Operaciones en lote (Batch) |
+| **Kernel** | 60 | FPS | Ciclo de control |
 
-### **Alignment (alignment)**
+### Alineación de Memoria (Alignment)
 
-| Valor | Uso |
-|-------|-----|
-| **64** | Cache line alignment (estándar para x86-64) |
-| **4096** | Page alignment (4KB para TLB optimization) |
+| Valor | Propósito |
+| :--- | :--- |
+| **64** | Cache Line Padding (x86-64 L1 Cache). Evita False Sharing. |
+| **4096** | Page Alignment. Optimización de TLB (Translation Lookaside Buffer). |
 
-### **Lock-Free (lockFree)**
+### Concurrencia (Lock-Free)
 
-| Valor | Uso |
-|-------|-----|
-| **true** | Ring buffers, TimeKeeper (spin-wait), componentes sin synchronized |
-| **false** | Kernel (orquestador), componentes con coordinación compleja |
+| Valor | Semántica |
+| :--- | :--- |
+| **true** | Algoritmos No-Bloqueantes (Wait-Free/Lock-Free). Ej: Ring Buffer. |
+| **false** | Coordinación estricta o Single-Threaded. |
 
-### **Off-Heap (offHeap)**
+### Gestión de Memoria (Off-Heap)
 
-| Valor | Uso |
-|-------|-----|
-| **true** | VolcanStateVault (MemorySegment), componentes con datos masivos |
-| **false** | Buses (long[] primitivo), Kernel (orquestador) |
+| Valor | Ubicación |
+| :--- | :--- |
+| **true** | `MemorySegment` (Nativo/Directo). Datos masivos persistentes. |
+| **false** | Java Heap (Objetos gestionados por GC). Control/Lógica. |
 
 ---
 
-## 🎯 Ejemplos de Referencia
+## 3. Implementaciones de Referencia
 
-### **Ejemplo 1: Bus Atómico (Sinapsis Neuronal)**
+### Caso 1: Bus de Eventos (Comunicación Inter-Core)
 
 ```java
-// PORQUÉ:
-// - Este bus es una sinapsis neuronal: transmite señales entre componentes
+// PROPOSITO:
+// - Mecanismo de transporte de señales entre hilos de ejecución.
 //
-// TÉCNICA:
-// - maxLatencyNs: 150 = VarHandles con Acquire/Release (sin synchronized)
-// - minThroughput: 10_000_000 = 10M eventos/segundo (batch operations)
-// - alignment: 64 = Cache line alignment para evitar False Sharing
-// - lockFree: true = Ring buffer sin locks (1 productor + 1 consumidor)
-// - offHeap: false = Buffer vive en heap (long[] primitivo)
+// ESPECIFICACION TECNICA:
+// - maxLatencyNs: 150 (Memory Fences)
+// - minThroughput: 10,000,000 (Batch Processing)
+// - alignment: 64 (L1 Cache Line Padding)
+// - lockFree: true (SPSC Circular Queue)
 //
 @AAACertified(
     date = "2026-01-06",
@@ -112,21 +113,19 @@ public final class ComponentName {
     offHeap = false,
     notes = "Lock-Free Ring Buffer with VarHandles and Cache Line Padding"
 )
-public final class VolcanAtomicBus implements IEventBus {
+public final class AtomicBus implements IEventBus {
 ```
 
-### **Ejemplo 2: Kernel (Procesador Central)**
+### Caso 2: Kernel (Orquestador de Ciclo)
 
 ```java
-// PORQUÉ:
-// - Este kernel es el cerebro: orquesta el flujo de datos en 4 fases
+// PROPOSITO:
+// - Controlador central del ciclo de ejecución determinista.
 //
-// TÉCNICA:
-// - maxLatencyNs: 16_666_000 = Fixed timestep a 60 FPS (16.666ms por frame)
-// - minThroughput: 60 = 60 frames por segundo (determinismo temporal)
-// - alignment: 64 = Cache line alignment para variables críticas
-// - lockFree: false = Usa TimeKeeper (spin-wait) pero no locks pesados
-// - offHeap: false = Kernel vive en heap (orquestador, no datos)
+// ESPECIFICACION TECNICA:
+// - maxLatencyNs: 16,666,000 (16.6ms frame time)
+// - minThroughput: 60 (Fixed Update Loop)
+// - lockFree: false (Control Flow Coordinator)
 //
 @AAACertified(
     date = "2026-01-06",
@@ -135,93 +134,50 @@ public final class VolcanAtomicBus implements IEventBus {
     alignment = 64,
     lockFree = false,
     offHeap = false,
-    notes = "Central neural processor - 4-phase deterministic loop at 60 FPS"
+    notes = "Central process coordinator - Deterministic fixed timestep"
 )
 public final class SovereignKernel {
 ```
 
-### **Ejemplo 3: TimeKeeper (Sensor Temporal)**
-
-```java
-// PORQUÉ:
-// - TimeKeeper es la neurona sensorial: captura tiempo determinista
-//
-// TÉCNICA:
-// - maxLatencyNs: 1 = Lectura directa del TSC (Time Stamp Counter)
-// - minThroughput: 60 = Fixed timestep a 60 FPS
-// - alignment: 64 = Cache line alignment para evitar False Sharing
-// - lockFree: true = Sin synchronized, solo operaciones atómicas
-// - offHeap: false = TimeKeeper vive en heap (no requiere memoria nativa)
-//
-@AAACertified(
-    date = "2026-01-06",
-    maxLatencyNs = 1,
-    minThroughput = 60,
-    alignment = 64,
-    lockFree = true,
-    offHeap = false,
-    notes = "Sensory neuron - TSC-based temporal determinism at 60 FPS"
-)
-public final class TimeKeeper {
-```
-
 ---
 
-## 🔬 Validación de Overhead
+## 4. Validación de Integridad (Zero-Overhead)
 
-### **Comando para verificar 0ns overhead**:
+Procedimiento para verificar la ausencia de impacto en el bytecode generado.
 
+**Comando de Verificación**:
 ```bash
-# Compilar el componente
-javac -d bin src/sv/volcan/[path]/ComponentName.java
-
-# Verificar que la anotación NO está en bytecode
-javap -c bin/sv/volcan/[path]/ComponentName.class | grep "AAACertified"
-
-# Resultado esperado: (vacío)
-# Si aparece algo = ERROR (cambiar RetentionPolicy)
+javac -d bin src/sv/runtime/[path]/ComponentName.java
+javap -c bin/sv/runtime/[path]/ComponentName.class | grep "AAACertified"
 ```
 
----
-
-## 📝 Checklist de Certificación
-
-Antes de certificar un componente, verificar:
-
-- [ ] **Nombre descriptivo** en el bloque de comentarios
-- [ ] **PORQUÉ** explica el rol del componente en el motor
-- [ ] **TÉCNICA** justifica cada parámetro con datos técnicos
-- [ ] **GARANTÍA** confirma 0ns overhead
-- [ ] **maxLatencyNs** basado en mediciones reales o estimaciones fundadas
-- [ ] **minThroughput** basado en requisitos del motor
-- [ ] **alignment** apropiado para el tipo de datos
-- [ ] **lockFree** correcto según mecanismo de concurrencia
-- [ ] **offHeap** correcto según gestión de memoria
-- [ ] **notes** conciso pero descriptivo
-- [ ] **date** actualizada a la fecha de certificación
+**Criterio de Aceptación**:
+*   Salida vacía (0 bytes).
+*   La anotación no debe estar presente en el binario final (`RetentionPolicy.SOURCE`).
 
 ---
 
-## 🎯 Componentes Certificados
+## 6. Certified Components (Production)
 
-### **Completados** ✅
-1. VolcanAtomicBus - Sinapsis neuronal (<150ns)
-2. VolcanRingBus - Sinapsis observable (<150ns)
-3. SovereignKernel - Procesador central (60 FPS)
-4. VolcanStateVault - Memoria a largo plazo (<150ns)
-5. TimeKeeper - Sensor temporal (<1ns)
+### VolcanAtomicBus (2026-01-12)
 
-### **Pendientes** ⏳
-- [ ] VolcanEventDispatcher
-- [ ] VolcanEventLane
-- [ ] SystemRegistry
-- [ ] WorldStateFrame
-- [ ] MovementSystem
-- [ ] PhysicsSystem
+**Certification Status**: ✅ AAA+ CERTIFIED
+
+| Métrica | Target | Measured | Delta | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Atomic Latency** | < 150 ns/op | 23.62 ns/op | -84.2% | ✅ PASSED |
+| **Throughput** | > 10M ops/s | 365.69M ops/s | +3556% | ✅ PASSED |
+| **GC Pressure** | 0 bytes/op | 0 bytes/op | 0.0% | ✅ ZERO-GC |
+
+**Hardware Impact**:
+- CPU Usage: 24% peak (78% sustained frequency)
+- Memory Stability: 68% physical (0 page faults/s)
+- Thread Affinity: 4 logical cores (synchronized peaks)
+
+**Test Suite**: `Test_BusBenchmark.java`
+**Build Protocol**: `BuildEngine.bat` (Vector API enabled)
 
 ---
 
-**Versión**: 1.0  
-**Autor**: Marvin-Dev  
-**Fecha**: 2026-01-06T20:55:16-06:00  
-**Uso**: Copiar/pegar para certificar nuevos componentes
+**Estado**: ACTIVE
+**Autoridad**: System Architect

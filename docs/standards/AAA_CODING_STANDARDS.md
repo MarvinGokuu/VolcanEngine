@@ -1,564 +1,150 @@
+# HPC_CODING_STANDARD
 
-
-## Propósito
-
-Este documento establece los estándares de ingeniería AAA+ para el motor Volcan, definiendo formatos de documentación, métricas de rendimiento, y patrones de implementación que deben seguirse en todo el proyecto.
+**Subsistema**: Engineering Standards
+**Tecnología**: Java 25 (Panama, Vector, Loom)
+**Estado**: Mandatory Specification
+**Autoridad**: System Architect
 
 ---
 
-## 1. Formato de Documentación Técnica
+## 1. Protocolo de Documentación en Código
 
-### 1.1 Bloques de Documentación
-
-Cada componente crítico debe incluir bloques de documentación con los siguientes elementos:
-
-**PROPÓSITO**: Explicación concisa de la función del componente.
-
-**MECÁNICA**: Detalles técnicos de implementación a nivel de hardware/CPU.
-
-**GARANTÍAS**: Promesas de rendimiento, seguridad de threads, o comportamiento.
-
-**PROHIBIDO**: Acciones que romperían las garantías del componente.
-
-### 1.2 Ejemplo Canónico
+### 1.1 Bloques de Especificación
+Cada componente crítico debe incluir documentación técnica centrada en el hardware.
 
 ```java
-// BARRIER DETERMINISM: Semántica de Memoria Acquire/Release
+// BARRIER SEMANTICS: Acquire/Release
 //
-// PROPÓSITO:
-// Los VarHandles proporcionan garantías de orden de memoria
-// sin el costo de locks pesados, alcanzando latencias de ~150ns.
+// CONTEXT:
+// VarHandles provide ordered memory access without monitor locks,
+// achieving ~150ns latency.
 //
-// MECÁNICA DE ACQUIRE (Lectura):
-// - HEAD_H.getAcquire(this): Garantiza que todas las escrituras previas
-//   en otros threads sean visibles ANTES de leer head.
+// MECHANICS (Acquire):
+// - HEAD.getAcquire(this): Ensures program order execution
+//   visibility before reading state.
 //
-// PROHIBIDO:
-// - NO usar acceso directo a head/tail en hot-path (rompe garantías).
+// CONSTRAINTS:
+// - Direct access to volatile fields in hot-path is PROHIBITED.
 ```
 
-### 1.3 Lenguaje Técnico
+### 1.2 Certificación de Rendimiento (`@AAACertified`)
+Esta anotación documenta las garantías de latencia y throughput validadas.
 
-- **Usar**: Terminología precisa de ingeniería (CPU, cache line, memory fence, RAW hazard)
-- **Evitar**: Referencias innecesarias, lenguaje coloquial
-- **Formato**: Comentarios concisos, directos, técnicamente precisos
-
-### 1.4 Licencia y Certificación AAA+
-
-**Anotación @AAACertified**: Marca componentes certificados bajo el estándar AAA+
-
-**Overhead**: 0ns (RetentionPolicy.SOURCE - eliminada en bytecode)
-
-**Uso Obligatorio**: Todos los componentes críticos (Bus, Kernel, Memory, Systems)
-
-**Formato Estándar** (NUEVO - 2026-01-06):
+**Formato Estándar**:
 
 ```java
 import sv.volcan.core.AAACertified;
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// CERTIFICACIÓN AAA+ - [NOMBRE DEL COMPONENTE]
-// ═══════════════════════════════════════════════════════════════════════════════
-//
-// PORQUÉ:
-// - Explicar la razón de cada parámetro de la anotación
-// - Justificar las decisiones de diseño
-// - Documentar el impacto en rendimiento
-//
-// TÉCNICA:
-// - maxLatencyNs: [valor] = [explicación técnica]
-// - minThroughput: [valor] = [explicación técnica]
-// - alignment: [valor] = [explicación técnica]
-// - lockFree: [true/false] = [explicación técnica]
-// - offHeap: [true/false] = [explicación técnica]
-//
-// GARANTÍA:
-// - Esta anotación NO afecta el rendimiento en runtime
-// - Solo documenta las métricas esperadas del componente
-// - Validable con herramientas estáticas en build-time
-//
+/**
+ * HIGH-PERFORMANCE CERTIFICATION
+ *
+ * RATIONALE:
+ * - Document performance guarantees for static analysis.
+ * - RetentionPolicy.SOURCE = 0ns execution overhead.
+ *
+ * TECHNICAL SPECS:
+ * - maxLatencyNs: 1 (TSC Read)
+ * - minThroughput: 60 (Fixed Layout)
+ * - alignment: 64 (L1 Cache Line)
+ */
 @AAACertified(
-    date = "YYYY-MM-DD",
-    maxLatencyNs = [valor],
-    minThroughput = [valor],
-    alignment = [valor],
-    lockFree = [true/false],
-    offHeap = [true/false],
-    notes = "[Descripción concisa del componente]"
-)
-public final class ComponentName {
-    // ...
-}
-```
-
-**Ejemplo Completo** (TimeKeeper):
-
-```java
-import sv.volcan.core.AAACertified;
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// CERTIFICACIÓN AAA+ - NEURONA SENSORIAL TEMPORAL
-// ═══════════════════════════════════════════════════════════════════════════════
-//
-// PORQUÉ:
-// - La anotación @AAACertified documenta las garantías de rendimiento inline
-// - RetentionPolicy.SOURCE = 0ns overhead (eliminada en bytecode)
-// - Metadata visible para humanos, invisible para la JVM
-//
-// TÉCNICA:
-// - maxLatencyNs: 1 = Lectura directa del TSC (Time Stamp Counter)
-// - minThroughput: 60 = Fixed timestep a 60 FPS
-// - alignment: 64 = Cache line alignment para evitar False Sharing
-// - lockFree: true = Sin synchronized, solo operaciones atómicas
-// - offHeap: false = TimeKeeper vive en heap (no requiere memoria nativa)
-//
-// GARANTÍA:
-// - Esta anotación NO afecta el rendimiento en runtime
-// - Solo documenta las métricas esperadas del componente
-// - Validable con herramientas estáticas en build-time
-//
-@AAACertified(
-    date = "2026-01-06",
+    date = "2026-01-12",
     maxLatencyNs = 1,
     minThroughput = 60,
     alignment = 64,
     lockFree = true,
     offHeap = false,
-    notes = "Sensory neuron - TSC-based temporal determinism at 60 FPS"
+    notes = "Temporal Determinism Unit - TSC-based"
 )
-public final class TimeKeeper {
-    // ...
-}
-```
-
-
-
----
-
-## 2. Métricas de Rendimiento
-
-### 2.1 Latencia de Operaciones
-
-**Objetivo AAA+**: <150ns para operaciones atómicas básicas
-
-**Medición**:
-```java
-long start = System.nanoTime();
-bus.offer(event);
-long latency = System.nanoTime() - start;
-```
-
-**Referencia de velocidad de la luz**: 299,792,458 m/s
-- En 150ns, la luz viaja ~45 metros
-- Objetivo: Operación más rápida que la luz cruzando un edificio
-
-### 2.2 Throughput de Procesamiento Masivo
-
-**Objetivo AAA+**: >10M eventos/segundo
-
-**Medición**:
-```java
-long[] events = new long[10_000_000];
-long start = System.nanoTime();
-bus.batchOffer(events, 0, events.length);
-long duration = System.nanoTime() - start;
-double throughput = (events.length / (duration / 1_000_000_000.0));
-```
-
-### 2.3 Alineación de Memoria
-
-**Objetivo AAA+**: 64 bytes (1 L1 Cache Line)
-
-**Validación**:
-```java
-if (getPaddingChecksum() != 0) {
-    throw new Error("Padding corruption detected");
-}
+public final class TimeKeeper { ... }
 ```
 
 ---
 
-## 3. Patrones de Empaquetado de Datos
+## 2. Estándares de Rendimiento (Hardware Targets)
 
-### 3.1 Uniformidad de Registro
+### 2.1 Latencia Atómica
+*   **Target**: < 150ns (Instrucción atomicidad hardware).
+*   **Verificación**: Medición de ciclo exacto (`System.nanoTime()`).
 
-**Principio**: Usar un solo tipo de dato primitivo (long de 64 bits) en el bus.
+### 2.2 Throughput de Memoria
+*   **Target**: > 4.0 GB/s (Off-Heap Bandwidth).
+*   **Implementación**: Uso estricto de `MemorySegment` (Zero-Copy).
 
-**Razón**: Evita cambios de contexto en la ALU del CPU, maximiza throughput.
-
-### 3.2 Empaquetado Vectorial
-
-**Patrón**: Empaquetar múltiples valores pequeños en un solo long.
-
-**Ejemplo - 2 floats en 1 long**:
-```java
-// Empaquetado
-public static long packFloats(float x, float y) {
-    int xBits = Float.floatToRawIntBits(x);
-    int yBits = Float# AAA+ Coding Standards - Volcan Engine.floatToRawIntBits(y);
-    return ((long) xBits << 32) | (yBits & 0xFFFFFFFFL);
-}
-
-// Desempaquetado
-public static float unpackX(long packed) {
-    return Float.intBitsToFloat((int) (packed >>> 32));
-}
-
-public static float unpackY(long packed) {
-    return Float.intBitsToFloat((int) (packed & 0xFFFFFFFFL));
-}
-```
-
-**Ejemplo - Coordenadas 3D (2 shorts + 1 int)**:
-```java
-// Empaquetado: x(16 bits) + y(16 bits) + z(32 bits) = 64 bits
-public static long packCoordinates(short x, short y, int z) {
-    return ((long) x << 48) | ((long) y << 32) | (z & 0xFFFFFFFFL);
-}
-```
-
-### 3.3 Prevención de Boxing
-
-**PROHIBIDO**:
-```java
-// MAL: Crea objetos en hot-path
-Long eventObject = Long.valueOf(event);
-bus.offer(eventObject.longValue());
-```
-
-**CORRECTO**:
-```java
-// BIEN: Operación directa sobre primitivos
-long event = 0xCAFEBABEL;
-bus.offer(event);
-```
+### 2.3 Alineación de Caché
+*   **Target**: 64 Bytes (L1 Cache Line).
+*   **Validación**: Padding explícito para evitar False Sharing.
 
 ---
 
-## 4. Arquitectura de VarHandles
+## 3. Patrones de Diseño de Bajo Nivel
 
-### 4.1 Semántica Acquire/Release
-
-**getAcquire**: Garantiza que todas las escrituras previas sean visibles.
-
-**setRelease**: Garantiza que todas las escrituras actuales sean visibles antes de actualizar.
-
-**compareAndSet**: CAS atómico para multi-consumidor.
-
-### 4.2 Mapeo de Hardware
-
-| Arquitectura | Acquire | Release |
-|--------------|---------|---------|
-| x86/x64 | MOV (TSO implícito) | MOV (TSO implícito) |
-| ARM/AArch64 | LDAR | STLR |
-| RISC-V | LD + FENCE | FENCE + ST |
-
-### 4.3 Comparación de Rendimiento
-
-| Mecanismo | Latencia | Uso |
-|-----------|----------|-----|
-| synchronized | ~1000-5000ns | Locks pesados |
-| VarHandle Acquire/Release | ~150ns | Operaciones atómicas |
-| volatile read/write | ~50-100ns | Visibilidad simple |
-| Acceso directo | ~10ns | Sin garantías de concurrencia |
-
----
-
-## 5. Estructura de Padding
-
-### 5.1 Layout de Memoria
-
-```
-┌─────────────────────────────────────────────────────────┐
-│ HEAD SHIELD (56 bytes)                                  │
-│ ├─ headShield_L1_slot1 (8 bytes)                        │
-│ ├─ headShield_L1_slot2 (8 bytes)                        │
-│ ├─ headShield_L1_slot3 (8 bytes)                        │
-│ ├─ headShield_L1_slot4 (8 bytes)                        │
-│ ├─ headShield_L1_slot5 (8 bytes)                        │
-│ ├─ headShield_L1_slot6 (8 bytes)                        │
-│ └─ headShield_L1_slot7 (8 bytes)                        │
-├─────────────────────────────────────────────────────────┤
-│ volatile long head (8 bytes)                            │
-└─────────────────────────────────────────────────────────┘
-         TOTAL: 64 bytes = 1 L1 Cache Line
-```
-
-### 5.2 Nomenclatura de Variables
-
-**Formato**: `{componente}_{nivel}_{identificador}`
-
-**Ejemplos**:
-- `headShield_L1_slot1`: Slot 1 del shield de head en L1
-- `isolationBridge_slot3`: Slot 3 del puente de aislamiento
-- `tailShield_L1_slot7`: Slot 7 del shield de tail en L1
-
-**PROHIBIDO**: Variables genéricas (p1, p2, p3, etc.)
-
----
-
-## 6. Métodos Avanzados AAA+
-
-### 6.1 Procesamiento Masivo
-
-**batchOffer**: Escritura masiva de eventos
-- Reduce operaciones volatile (1 setRelease vs N)
-- Throughput: >10M eventos/segundo
-
-**batchPoll**: Lectura masiva de eventos
-- Reduce operaciones Acquire
-- Permite procesamiento vectorizado
-
-### 6.2 Comunicación Espacial
-
-**peekWithSequence**: Lectura indexada sin consumir
-- Retransmisión de paquetes perdidos
-- Comunicación satelital
-
-**isContiguous**: Validación de espacio contiguo
-- Permite System.arraycopy directo
-- Máxima velocidad de transferencia
-
-### 6.3 Multi-Consumidor
-
-**casHead**: Compare-And-Swap en head
-- Múltiples consumidores concurrentes
-- Escalabilidad multi-thread
-
-### 6.4 Sincronización
-
-**spatialMemoryBarrier**: Barrera de memoria completa
-- Flush de write buffers del CPU
-- Visibilidad global garantizada
-- Costo: ~500ns (usar con precaución)
-
-**sovereignShutdown**: Cierre seguro
-- Validación de estado final
-- Prevención de memory leaks
-
----
-
-## 7. Signal Dispatcher - Datos Especializados
-
-### 7.1 Vectores 2D
-
-**packFloats(float x, float y)**: Empaqueta 2 floats en 1 long
-- Formato: [X: 32 bits][Y: 32 bits]
-- Latencia: ~5ns
-- Sin pérdida de precisión (IEEE 754)
-
-**Uso**:
-```java
-long vector = VolcanSignalPacker.packFloats(10.5f, 20.3f);
-dispatcher.dispatchVector2D(10.5f, 20.3f);
-```
-
-### 7.2 Coordenadas 3D Comprimidas
-
-**packCoordinates3D(short x, short y, int z)**: Empaqueta 3 coordenadas
-- Formato: [X: 16 bits][Y: 16 bits][Z: 32 bits]
-- Optimización: 75% vs 3 floats
-- Uso: Telemetría espacial
-
-### 7.3 GUIDs y Punteros Off-Heap
-
-**packGUID(long)**: Identificadores únicos de 64 bits
-**packOffHeapPointer(long)**: Referencias a MemorySegment
-
-**Advertencia**: Punteros solo válidos en la misma sesión JVM
-
-### 7.4 Señales Atómicas
-
-**packAtomicSignals(long)**: 63 bits de flags booleanos
-**getSignalBit(long, int)**: Lee bit específico
-**setSignalBit(long, int, boolean)**: Establece bit específico
-
-**Uso**:
-```java
-long signals = 0L;
-signals = VolcanSignalPacker.setSignalBit(signals, 0, true); // Satélite conectado
-boolean connected = VolcanSignalPacker.getSignalBit(signals, 0);
-```
-
----
-
-## 8. Comandos del Sistema
-
-### 8.1 Categorías de Comandos
-
-| Categoría | Rango | Descripción |
-|-----------|-------|-------------|
-| INPUT | 0x1000-0x1FFF | Teclado, mouse, gamepad |
-| NETWORK | 0x2000-0x2FFF | Sincronización, paquetes |
-| SYSTEM | 0x3000-0x3FFF | Entidades, motor |
-| AUDIO | 0x4000-0x4FFF | Sonidos, volumen |
-| PHYSICS | 0x5000-0x5FFF | Fuerzas, colisiones |
-| RENDER | 0x6000-0x6FFF | Shaders, texturas |
-| SPATIAL | 0x7000-0x7FFF | Telemetría, órbitas |
-| MEMORY | 0x8000-0x8FFF | Off-heap, alineación |
-
-### 8.2 Formato de Command ID
-
-**Estructura**: [Type Base: 16 bits][Specific Command: 16 bits]
-
-**Ejemplo**: `0x7001` = `0x7000` (SPATIAL) + `0x0001` (ORBITAL_UPDATE)
-
----
-
-## 9. Ejemplos de Uso Óptimo
-
-### 9.1 Productor-Consumidor Simple
+### 3.1 Empaquetado Primitivo (Data Packing)
+Uso de registros de 64 bits (`long`) para evitar direccionamiento indirecto.
 
 ```java
-// Productor
-VolcanAtomicBus bus = new VolcanAtomicBus(14); // 16384 elementos
-long event = 0xCAFEBABEL;
-if (bus.offer(event)) {
-    // Evento insertado
-}
-
-// Consumidor
-long receivedEvent = bus.poll();
-if (receivedEvent != -1L) {
-    // Procesar evento
+// [Float X: 32b] [Float Y: 32b]
+public static long packVector2F(float x, float y) {
+    long xBits = Float.floatToRawIntBits(x);
+    long yBits = Float.floatToRawIntBits(y);
+    return (xBits << 32) | (yBits & 0xFFFFFFFFL);
 }
 ```
 
-### 9.2 Procesamiento Masivo
+### 3.2 Gestión de VarHandles (Atomic Barriers)
+
+| Operación | Instrucción Hardware (x86) | Semántica |
+| :--- | :--- | :--- |
+| `getAcquire()` | `MOV` (Ordered Load) | Barrera de Visibilidad (Visibility Barrier) |
+| `setRelease()` | `MOV` (Ordered Store) | Barrera de Completitud (Completion Barrier) |
+| `compareAndSet()` | `LOCK CMPXCHG` | Actualización Atómica |
+
+### 3.3 Estructuras con Padding (Cache Isolation)
 
 ```java
-// Escritura masiva
-long[] events = new long[1000];
-for (int i = 0; i < events.length; i++) {
-    events[i] = generateEvent();
-}
-int written = bus.batchOffer(events, 0, events.length);
-
-// Lectura masiva
-long[] buffer = new long[1000];
-int read = bus.batchPoll(buffer, 1000);
-for (int i = 0; i < read; i++) {
-    processEvent(buffer[i]);
-}
+// L1 ISOLATION: 64 Bytes total
+long p1, p2, p3, p4, p5, p6, p7; // Prefix Padding (56B)
+volatile long value;             // Payload (8B)
 ```
 
-### 9.3 Telemetría Espacial
-
-```java
-// Productor (satélite)
-float orbitX = 1000.5f;
-float orbitY = 2000.3f;
-dispatcher.dispatchVector2D(orbitX, orbitY);
-
-// Consumidor (estación terrestre)
-long telemetry = dispatcher.pollEvent();
-if (telemetry != -1L) {
-    float x = VolcanSignalPacker.unpackX(telemetry);
-    float y = VolcanSignalPacker.unpackY(telemetry);
-    updateOrbit(x, y);
-}
-```
-
-### 9.4 Edge Computing Zero-Copy
-
-```java
-// Datos externos (ya en formato long[])
-long[] satelliteData = receiveSatelliteData();
-
-// Inyección directa sin copias
-int injected = dispatcher.injectFromExternal(satelliteData, satelliteData.length);
-
-// Procesamiento inmediato
-dispatcher.processAllEvents(signal -> {
-    processSatelliteSignal(signal);
-});
-```
+**Regla**: Cualquier contador volátil accedido por múltiples hilos requiere su propia línea de caché.
 
 ---
 
-## 10. Anti-Patrones
+## 4. Anti-Patrones Prohibidos
 
-### 10.1 PROHIBIDO: Acceso Directo a Punteros
-
+### 4.1 Boxing/Unboxing en Hot-Paths
+**PROHIBIDO**: Instanciación de wrappers (`Long`, `Integer`). Genera presión en GC y fallos de caché.
 ```java
-// MAL: Rompe garantías de memoria
-long currentHead = bus.head; // Acceso directo
+// VIOLACIÓN CRÍTICA
+queue.add(Long.valueOf(timestamp)); 
 ```
 
-### 10.2 PROHIBIDO: Boxing en Hot-Path
+### 4.2 Bloqueo de Monitor (Synchronized)
+**PROHIBIDO**: Uso de keywords `synchronized` o `locks` en rutas críticas de latencia.
+*   **Alternativa**: `VarHandle` o algoritmos Wait-Free (Lock-Free).
 
-```java
-// MAL: Crea objetos
-Long event = Long.valueOf(data);
-bus.offer(event);
-```
-
-### 10.3 PROHIBIDO: Modificar Variables de Padding
-
-```java
-// MAL: Rompe alineación de cache line
-bus.headShield_L1_slot1 = 1; // NUNCA hacer esto
-```
-
-### 10.4 PROHIBIDO: Ignorar Retorno de dispatch()
-
-```java
-// MAL: Ignora si el bus está lleno
-dispatcher.dispatch(event);
-
-// BIEN: Maneja backpressure
-if (!dispatcher.dispatch(event)) {
-    handleBackpressure(event);
-}
-```
+### 4.3 I/O Síncrono
+**PROHIBIDO**: `System.out.println` o I/O bloqueante dentro del loop de simulación.
 
 ---
 
-## 11. Verificación de Cumplimiento
+## 5. Verificación de Cumplimiento
 
-### 11.1 Compilación
+### 5.1 Suite de Validación
+El código debe pasar las pruebas de integridad de memoria sin errores de alineación.
 
 ```bash
-SovereignProtocol.bat
-```
-
-### 11.2 Tests de Integridad
-
-```bash
+# Validación de Alineación y Padding
 java sv.volcan.bus.Test_BusHardware
-java sv.volcan.bus.Test_BusCoordination
 ```
 
-### 11.3 Benchmarking
-
-```bash
-java sv.volcan.bus.Test_BusBenchmark
-```
-
-**Métricas esperadas**:
-- Latencia offer(): <150ns
-- Latencia poll(): <150ns
-- Throughput batchOffer(): >10M eventos/s
-- Padding checksum: 0
-- L1 Cache miss rate: <1%
+### 5.2 Benchmarks
+Validación continua de regresión de rendimiento.
+*   Latencia `offer/poll` < 150ns.
+*   Tasa de Fallos L1 < 0.1%.
 
 ---
 
-## 12. Resumen de Estándares
-
-| Aspecto | Estándar AAA+ |
-|---------|---------------|
-| Latencia básica | <150ns |
-| Throughput masivo | >10M eventos/s |
-| Alineación de memoria | 64 bytes (L1 Cache Line) |
-| Tipo de dato | long (64 bits) |
-| Nomenclatura | Descriptiva, basada en hardware |
-| Documentación | Técnica, concisa, precisa |
-| Lenguaje | Profesional, sin referencias innecesarias |
-
----
-
-**Versión**: 2.0  
-**Fecha**: 2026-01-05  
-**Autor**: Marvin-Dev  
-**Actualización**: Signal Dispatcher AAA+ Integration
+**Estado**: VIGENTE
+**Autoridad**: System Architect
