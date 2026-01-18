@@ -1,47 +1,61 @@
-# ⚛️ Física del Acelerador: De Partículas a Datos
+# ACCELERATOR_HARDWARE_SPECIFICATION
 
-Estableciendo el puente científico entre el Gran Colisionador de Hadrones (LHC) y el Volcan Data Accelerator.
-
----
-
-## 1. La Física Real (Mundo Subatómico)
-
-La fórmula fundamental que gobierna un acelerador de partículas es la **Fuerza de Lorentz**. Esta fuerza es la que empuja (acelera) y curva (dirige) las partículas.
-
-### **$$ \vec{F} = q(\vec{E} + \vec{v} \times \vec{B}) $$**
-
-Donde:
-*   **$\vec{F}$**: Fuerza total aplicada a la partícula.
-*   **$q$**: Carga eléctrica de la partícula (nuestro "Dato").
-*   **$\vec{E}$**: **Campo Eléctrico**. Es el que da la **Energía/Velocidad** (acelera).
-*   **$\vec{B}$**: **Campo Magnético**. Es el que **Curva la trayectoria** (mantiene la partícula en el anillo).
-*   **$\vec{v}$**: Velocidad de la partícula.
-
-**En resumen**: Usas electricidad para empujar y magnetismo para guiar.
+**Subsistema**: Vector Processing
+**Tecnología**: AVX-512 / SIMD
+**Estado**: Active Specification
+**Autoridad**: System Architect
 
 ---
 
-## 2. La Física de Volcan (Mundo de Datos)
+## 1. Principios de Procesamiento Vectorial
 
-En `VolcanDataAccelerator`, aplicamos una versión computacional de esta ley.
+El Acelerador de Datos (`DataAccelerator`) implementa un modelo de ejecución SIMD (Single Instruction, Multiple Data) para maximizar el throughput aritmético del silicio.
 
-### **$$ Throughput = \frac{Bandwidth \times Lanes}{Latencia} $$**
+### Ecuación de Rendimiento
+$$ Throughput = \frac{Bandwidth \times VectorWidth}{Latency} $$
 
-Analogía Directa:
-1.  **Partícula ($q$)**: Un `byte` o `int` (el dato crudo).
-2.  **Campo Eléctrico ($\vec{E}$)**: **CPU Clock**. Es lo que "empuja" los datos a través del silicio.
-3.  **Campo Magnético ($\vec{B}$)**: **Vector Lanes (AVX)**. Son los "imanes" que alinean 8 o 16 datos para que viajen juntos en paralelo sin chocar.
-4.  **Colisión**: La operación matemática (Suma, Multiplicación) que ocurre en el ALU.
+**Variables del Sistema**:
+1.  **Bandwidth**: Capacidad de transferencia de memoria (GB/s).
+2.  **Vector Width**: Ancho del registro vectorial (256/512 bits). Definido por `VectorSpecies`.
+3.  **Latency**: Tiempo de ejecución de instrucción CPU + Acceso a memoria.
 
 ---
 
-## 3. Comparativa de Energía
+## 2. Implementación de Hardware
 
-| Concepto | LHC (CERN) | Volcan Accelerator |
+La arquitectura mapea conceptos lógicos directamente a capacidades físicas del procesador.
+
+| Concepto Lógico | Implementación de Hardware | Descripción Técnica |
 | :--- | :--- | :--- |
-| **Combustible** | Protones | Integers (32-bit) |
-| **Acelerador** | Imanes Superconductores | Registros AVX-512/256 |
-| **Velocidad** | 99.999% de $c$ (luz) | 50 GB/s (Velocidad RAM) |
-| **Resultado** | Bosón de Higgs | Checksum Instantáneo AAA+ |
+| **Unidad de Dato** | `Integer` / `Float` (32-bit) | Operando escalar básico. |
+| **Motor de Ejecución** | CPU Core Clock | Frecuencia de ciclo de instrucción. |
+| **Carril de Proceso** | Vector Registers (AVX) | Alineación de 8/16 operandos para ejecución paralela. |
+| **Operación** | ALU Instruction | Suma/Multiplicación vectorial en un ciclo de reloj. |
 
-> **"Un acelerador de datos no es más que un tubo de vacío donde los bits viajan en formación perfecta, empujados por el reloj del CPU."** — *Marvin-Dev*
+---
+
+## 3. Comparativa de Eficiencia
+
+Análisis de eficiencia entre procesamiento escalar (SISD) y vectorial (SIMD).
+
+| Métrica | Procesamiento Escalar | Procesamiento Vectorial (Volcan) | Delta |
+| :--- | :--- | :--- | :--- |
+| **Datos por Ciclo** | 1 | 8 (AVX-256) / 16 (AVX-512) | +700% / +1500% |
+| **Ancho de Registros** | 64-bit (GPR) | 256-bit (YMM) | 4x |
+| **Throughput Teórico** | Base | Base x8 | 8x |
+| **Integridad** | Serial | Checksum Paralelo | - |
+
+---
+
+## 4. Definición de Arquitectura
+
+> "El Acelerador de Datos es un pipeline de ejecución que garantiza el transporte y transformación de vectores de datos alineados, sincronizados por el ciclo de reloj del procesador."
+
+### Parámetros de Operación
+*   **Alineación de Entrada**: Los datos deben estar alineados a fronteras de vector (ej. 32 bytes para AVX-256) para evitar penalizaciones de carga (`unaligned load penalties`).
+*   **Máscaras de Control**: Uso de máscaras de bits para gestión de divergencia en el flujo de control vectorial.
+
+---
+
+**Estado**: VIGENTE
+**Autoridad**: System Architect
