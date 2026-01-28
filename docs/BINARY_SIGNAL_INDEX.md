@@ -114,7 +114,7 @@ Reference mapping for `VolcanSignalCommands`.
 ### 2.9. ACCELERATOR (0x9000 - 0x9FFF)
 | OpCode | Mnemonic | Payload | Technical Description |
 | :--- | :--- | :--- | :--- |
-| `0x9001` | `ACCEL_IGNITE_SIMD` | `LaneWidth` | Initialize Vector Processing. |
+| `0x9001` | `ACCEL_INIT_SIMD` | `LaneWidth` | Initialize Vector Processing. |
 | `0x9002` | `ACCEL_VECTOR_REDUCE`| `MemPtr` | SIMD Reduction Operation. |
 | `0x9003` | `ACCEL_VECTOR_TRANS` | `MemPtr` | SIMD Transformation. |
 | `0x9004` | `ACCEL_DUMP_STATS` | `0` | Throughput Reporting. |
@@ -160,7 +160,7 @@ Atomic state transitions managed by `KernelControlRegister`.
 
 *   **0**: `STATE_OFFLINE`
 *   **1**: `STATE_BOOTING`
-*   **2**: `STATE_IGNITION` (JIT Warm-up phase)
+*   **2**: `STATE_STARTING` (JIT Warm-up phase)
 *   **3**: `STATE_RUNNING` (Active Loop)
 *   **4**: `STATE_PAUSED`
 *   **5**: `STATE_HALTING`

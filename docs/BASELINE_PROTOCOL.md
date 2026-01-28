@@ -206,7 +206,7 @@ cd c:\Users\theca\Documents\GitHub\VolcanEngine
 SovereignProtocol.bat
 
 # Ejecutar test de Graceful Shutdown
-java -cp bin sv.volcan.test.Test_GracefulShutdown
+java -cp bin sv.volcan.test.GracefulShutdownTest
 ```
 
 ## Integración con VisualObserver

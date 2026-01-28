@@ -269,7 +269,7 @@ Sin allocations
 
 ### Fase 6: Verificación
 
-1. **Compilar**: `SovereignProtocol.bat`
+1. **Compilar**: `build.bat`
 2. **Tests de corrección**: Validar empaquetado/desempaquetado
 3. **Benchmarking**: Medir latencias (<150ns) y throughput (>10M eventos/s)
 4. **Validación de precisión**: Round-trip tests para floats
@@ -341,7 +341,7 @@ Elevación exitosa de [VolcanAtomicBus](file:///c:/Users/theca/Documents/GitHub/
 - [isContiguous(int)](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/VolcanAtomicBus.java#486-511): Validación para System.arraycopy
 - [casHead(long, long)](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/VolcanAtomicBus.java#512-527): Multi-consumidor CAS
 - [spatialMemoryBarrier()](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/VolcanRingBus.java#516-529): Barrera de memoria completa
-- [sovereignShutdown()](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/VolcanAtomicBus.java#542-561): Cierre seguro con validación
+- [gracefulShutdown()](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/VolcanAtomicBus.java#542-561): Cierre seguro con validación
 
 ---
 
@@ -363,7 +363,7 @@ Elevación exitosa de [VolcanAtomicBus](file:///c:/Users/theca/Documents/GitHub/
 
 ### 3. AAA_CODING_STANDARDS.md - Estándar Canónico
 
-**Ubicación**: [AAA_CODING_STANDARDS.md](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/docs/AAA_CODING_STANDARDS.md)
+**Ubicación**: [AAA_CODING_STANDARDS.md](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/docs/standards/AAA_CODING_STANDARDS.md)
 
 #### Contenido
 
@@ -477,19 +477,19 @@ batchOffer(events[], offset, length):
 
 ### Tests Existentes
 
-**Test_BusHardware.java**:
+**BusHardwareTest.java**:
 - Validación de padding (checksum == 0)
 - Verificación de señales (0xCAFEBABECAFED00DL)
 - Auditoría de alineación de 64 bytes
 
-**Test_BusCoordination.java**:
+**BusCoordinationTest.java**:
 - Coordinación entre buses
 - Integridad de datos
 
 ### Comando de Compilación
 
 ```bash
-SovereignProtocol.bat
+build.bat
 ```
 
 **Resultado esperado**: 0 errores de compilación
@@ -581,7 +581,7 @@ SovereignProtocol.bat
 
 1. [VolcanAtomicBus.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/VolcanAtomicBus.java) - 562 líneas
 2. [VolcanRingBus.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/VolcanRingBus.java) - 562 líneas
-3. [AAA_CODING_STANDARDS.md](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/docs/AAA_CODING_STANDARDS.md) - Nuevo
+3. [AAA_CODING_STANDARDS.md](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/docs/standards/AAA_CODING_STANDARDS.md) - Nuevo
 
 ---
 
@@ -594,8 +594,8 @@ SovereignProtocol.bat
 
 ### Fase 5: Verificación
 
-1. Compilar: `SovereignProtocol.bat`
-2. Ejecutar: [Test_BusHardware.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/Test_BusHardware.java)
+1. Compilar: `build.bat`
+2. Ejecutar: [BusHardwareTest.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/BusHardwareTest.java)
 3. Benchmarking: Medir latencias y throughput
 4. Memory profiling: Validar alineación de 64 bytes
 
@@ -739,17 +739,17 @@ Esta estructura se repite para:
 ### Tests Existentes
 Los siguientes tests validan la integridad del padding:
 
-1. **[Test_BusHardware.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/Test_BusHardware.java)**
+1. **[BusHardwareTest.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/BusHardwareTest.java)**
    - Verifica que la suma de todos los slots sea 0
    - Valida señales de datos (0xCAFEBABECAFED00DL)
 
-2. **[Test_BusCoordination.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/Test_BusCoordination.java)**
+2. **[BusCoordinationTest.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/BusCoordinationTest.java)**
    - Prueba coordinación entre buses
    - Verifica alineación de memoria
 
 ### Comando de Verificación
 ```bash
-SovereignProtocol.bat
+build.bat
 ```
 
 ---
@@ -804,14 +804,14 @@ Los siguientes warnings son **NORMALES** y **ESPERADOS**:
 | [VolcanRingBus.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/VolcanRingBus.java) | ✅ Reconstruido | Implementación completa desde cero |
 | Padding Verification | ✅ Funcional | 21 variables protegidas (7+7+7) |
 | Documentación | ✅ AAA-Grade | Explicación de VarHandles y buffer |
-| Tests | ✅ Existentes | [Test_BusHardware.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/Test_BusHardware.java) validado |
+| Tests | ✅ Existentes | [BusHardwareTest.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/BusHardwareTest.java) validado |
 
 ---
 
 ## Próximos Pasos Recomendados
 
-1. **Compilar el proyecto**: Ejecutar `SovereignProtocol.bat`
-2. **Ejecutar tests**: Verificar [Test_BusHardware.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/Test_BusHardware.java)
+1. **Compilar el proyecto**: Ejecutar `build.bat`
+2. **Ejecutar tests**: Verificar [BusHardwareTest.java](file:///c:/Users/theca/Documents/GitHub/VolcanEngine/src/sv/volcan/bus/BusHardwareTest.java)
 3. **Benchmarking**: Medir latencias (~150ns esperados)
 4. **Memory Dump**: Validar alineación de 64 bytes con herramientas de profiling
 

@@ -31,7 +31,7 @@ El historial de versiones debe constituir una narrativa técnica de la evolució
 **Tag**: `v0.2-kernel`
 **Objetivo**: Implementación del ciclo de control determinista.
 
-*   **Componentes**: `SovereignKernel` (Loop de Control), `TimeKeeper` (Sincronización).
+*   **Componentes**: `EngineKernel` (Loop de Control), `TimeKeeper` (Sincronización).
 *   **Métrica Clave**: Fixed Timestep (60 Hz).
 
 ### Hito 3: v0.3 - Memoria Off-Heap
@@ -73,7 +73,7 @@ El historial de versiones debe constituir una narrativa técnica de la evolució
 **Tag**: `v0.8-tests`
 **Objetivo**: Verificación empírica de alineación y concurrencia.
 
-*   **Componentes**: `Test_BusHardware`, `Test_BusCoordination`.
+*   **Componentes**: `BusHardwareTest`, `BusCoordinationTest`.
 *   **Validación**: Padding de Cache Line correcto.
 
 ### Hito 9: v0.9 - Documentación Técnica AAA+

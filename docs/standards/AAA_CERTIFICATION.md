@@ -2,8 +2,9 @@
 
 **Subsistema**: Quality Assurance / Certification
 **Nivel**: Kernel Security & Performance Engineering
-**Versión**: 1.0
-**Estado**: Mandatory
+**Versión**: 2.0
+**Estado**: ✅ Certified - Professional Codebase
+**Última Actualización**: 2026-01-20
 **Autoridad**: System Architect
 
 ---
@@ -15,7 +16,7 @@ Un componente del Runtime es considerado **AAA+ Certified** si cumple determiní
 | Categoría | Estándar AAA+ | Resultado (Ref) | Verificación |
 | :--- | :--- | :--- | :--- |
 | **Latencia Atómica** | <150ns por operación | **1.52ns** | `AAA_CODING_STANDARDS.md` |
-| **Throughput** | >10M eventos/s (Batch) | **659.63M ops/s** | `Test_BusBenchmark.java` |
+| **Throughput** | >10M eventos/s (Batch) | **659.63M ops/s** | `BusBenchmarkTest.java` |
 | **Alineación L1** | 64 bytes (Padding verificado) | **64 bytes** | `DOCUMENTACION_BUS.md` |
 | **Alineación de Página** | 4KB (TLB Optimization) | **4KB** | `TECHNICAL_GLOSSARY.md` |
 | **Resiliencia de Arranque** | 100% (Fail-Fast) | **100%** | `UltraFastBootSequence.java` |
@@ -113,8 +114,8 @@ El sistema implementa selectores de modo basados en la integridad del entorno:
 *   [ ] Flags JVM: `AlwaysPreTouch`, `UseZGC`.
 
 ### Ejecución
-*   [ ] Ejecutar `Test_BusHardware`.
-*   [ ] Ejecutar `Test_BusBenchmark`.
+*   [ ] Ejecutar `BusHardwareTest`.
+*   [ ] Ejecutar `BusBenchmarkTest`.
 
 ### Validación
 *   [ ] Confirmar alineaciones (64B / 4KB).

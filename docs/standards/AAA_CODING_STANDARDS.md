@@ -136,7 +136,7 @@ El código debe pasar las pruebas de integridad de memoria sin errores de alinea
 
 ```bash
 # Validación de Alineación y Padding
-java sv.volcan.bus.Test_BusHardware
+java sv.volcan.bus.BusHardwareTest
 ```
 
 ### 5.2 Benchmarks

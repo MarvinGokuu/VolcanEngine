@@ -50,8 +50,8 @@ update.bat
 [4/5] Verificando archivos de codigo criticos...
 [OK] src\sv\volcan\bus\VolcanAtomicBus.java
 [OK] src\sv\volcan\bus\VolcanRingBus.java
-[OK] src\sv\volcan\bus\Test_BusHardware.java
-[OK] src\sv\volcan\kernel\SovereignKernel.java
+[OK] src\sv\volcan\bus\BusHardwareTest.java
+[OK] src\sv\volcan\kernel\EngineKernel.java
 
 [5/5] Generando reporte de sincronizacion...
 [OK] Reporte generado: sync_report_20260105.txt
@@ -81,8 +81,8 @@ Reporte generado: sync_report_20260105.txt
 
 1. `src\sv\volcan\bus\VolcanAtomicBus.java` - Bus atómico lock-free
 2. `src\sv\volcan\bus\VolcanRingBus.java` - Ring buffer
-3. `src\sv\volcan\bus\Test_BusHardware.java` - Test de padding
-4. `src\sv\volcan\kernel\SovereignKernel.java` - Kernel principal
+3. `src\sv\volcan\bus\BusHardwareTest.java` - Test de padding
+4. `src\sv\volcan\kernel\EngineKernel.java` - Kernel principal
 
 ---
 
@@ -120,8 +120,8 @@ WALKTHROUGH_LEGACY.md
 CODIGO CRITICO:
 [OK] src\sv\volcan\bus\VolcanAtomicBus.java
 [OK] src\sv\volcan\bus\VolcanRingBus.java
-[OK] src\sv\volcan\bus\Test_BusHardware.java
-[OK] src\sv\volcan\kernel\SovereignKernel.java
+[OK] src\sv\volcan\bus\BusHardwareTest.java
+[OK] src\sv\volcan\kernel\EngineKernel.java
 ```
 
 ---
@@ -193,7 +193,7 @@ update.bat
 
 **Síntoma**:
 ```
-[FALTA] src\sv\volcan\bus\Test_BusBenchmark.java
+[FALTA] src\sv\volcan\bus\BusBenchmarkTest.java
 ```
 
 **Acción**:
@@ -210,7 +210,7 @@ update.bat
 Editar `update.bat` línea 60:
 
 ```batch
-set CRITICAL_CODE=src\sv\volcan\bus\VolcanAtomicBus.java src\sv\volcan\bus\VolcanRingBus.java src\sv\volcan\bus\Test_BusHardware.java src\sv\volcan\bus\Test_BusBenchmark.java src\sv\volcan\kernel\SovereignKernel.java
+set CRITICAL_CODE=src\sv\volcan\bus\VolcanAtomicBus.java src\sv\volcan\bus\VolcanRingBus.java src\sv\volcan\bus\BusHardwareTest.java src\sv\volcan\bus\BusBenchmarkTest.java src\sv\volcan\kernel\EngineKernel.java
 ```
 
 ### Agregar Nuevos Documentos Críticos
