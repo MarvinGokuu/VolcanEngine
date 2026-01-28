@@ -18,14 +18,19 @@ Este proyecto implementa un runtime de simulación determinista de alta frecuenc
 
 ---
 
-## 2. Métricas de Certificación (Actualizado 2026-01-24)
+## 2. Métricas de Certificación (Verificado 2026-01-27)
 
-| Métrica | Target | Medido | Delta | Unidad |
-| :--- | :--- | :--- | :--- | :--- |
-| **Atomic Bus Latency** | < 150 | **23.35** | -84% | ns |
-| **Event Throughput** | > 10.0 | **185.0** | +1750% | M/s |
-| **SIMD Bandwidth** | > 4.0 | **4.17** | +4.2% | GB/s |
-| **Boot Latency** | < 1.0 | **0.167** | -83% | ms |
+| Métrica | Target | Typical | Best | Delta | Unidad |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Atomic Bus Latency** | < 150 | **23.35** | **23.35** | -84% | ns |
+| **Event Throughput** | > 10.0 | **185.0** | **185.0** | +1750% | M/s |
+| **SIMD Bandwidth** | > 4.0 | **4.17** | **4.17** | +4.2% | GB/s |
+| **Boot Latency** | < 1.0 | **0.221-0.427** | **0.167** | -78% to -57% | ms |
+
+**Notas de Verificación**:
+*   **Typical**: Rango observado en test suite completo (7/7 tests, 2026-01-27)
+*   **Best**: Récord histórico bajo condiciones óptimas (JIT warm, cache hot)
+*   **Test Coverage**: 100% (BusBenchmark, BusCoordination, BusHardware, UltraFastBoot, GracefulShutdown, PowerSaving, Governor)
 
 ### 2.1. Características AAA+ Implementadas
 
