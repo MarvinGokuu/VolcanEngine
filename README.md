@@ -49,16 +49,28 @@ Este proyecto implementa un runtime de simulación determinista de alta frecuenc
 
 ### 3.2. Secuencia de Ejecución
 
+**Para certificación AAA+ y métricas récord:**
 ```bash
-# 1. Compilación del Kernel (incluye flags de preview)
+# 1. Compilación optimizada (incluye auto-limpieza)
 build.bat
+# [Cerrar motor auto-ejecutado con Ctrl+C]
 
-# 2. Inicialización del Runtime (Production - Maximum Performance)
-java --enable-preview --add-modules jdk.incubator.vector -cp bin sv.volcan.state.VolcanEngineMaster
-
-# 3. Inicialización con Development Profile (Full Observability)
-java -Dvolcan.profile=development --enable-preview --add-modules jdk.incubator.vector -cp bin sv.volcan.state.VolcanEngineMaster
+# 2. Validación completa (7/7 tests)
+test.bat
 ```
+
+**Para desarrollo rápido (hot reload):**
+```bash
+# Compilar una vez
+build.bat
+# [Cerrar motor]
+
+# Ejecutar sin recompilar
+run.bat
+```
+
+> 📖 **Referencia completa**: Ver [docs/BUILD_WORKFLOWS.md](docs/BUILD_WORKFLOWS.md) para workflows detallados, flags de compilación, y casos de uso.
+
 
 ### 3.3. Perfiles de Configuración
 

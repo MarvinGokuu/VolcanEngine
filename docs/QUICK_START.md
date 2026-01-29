@@ -83,6 +83,25 @@ Si ves el output anterior, **el motor está corriendo**. Presiona `Ctrl+C` para 
 
 ---
 
+## 📜 BUILD SCRIPTS REFERENCE
+
+Para información detallada sobre todos los scripts de compilación y sus casos de uso:
+
+📖 **[BUILD_WORKFLOWS.md](BUILD_WORKFLOWS.md)** - Guía completa de workflows
+
+**Scripts disponibles:**
+- `clean.bat` - Limpia artefactos de compilación
+- `build.bat` - Compilación AAA+ optimizada (incluye auto-limpieza)
+- `test.bat` - Suite completa de tests (7/7)
+- `run.bat` - Ejecuta sin recompilar (hot reload)
+
+**Workflows principales:**
+1. **Certificación AAA+**: `build.bat` → cerrar motor → `test.bat`
+2. **Desarrollo**: `build.bat` → editar código → `build.bat`
+3. **Hot Reload**: `build.bat` → `run.bat` (sin recompilar)
+
+---
+
 ## 🏗️ ARQUITECTURA VISUAL
 
 ### **Flujo de Ejecución:**
