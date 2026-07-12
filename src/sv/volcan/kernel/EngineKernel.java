@@ -263,6 +263,34 @@ public final class EngineKernel {
         runMainLoop();
     }
 
+    public sv.volcan.kernel.TimeKeeper getTimeKeeper() {
+        return timeKeeper;
+    }
+
+    /**
+     * Dumps the current performance metrics to the logger explicitly (e.g. for UI triggers)
+     */
+    public void dumpTelemetryToLog() {
+        double frameTimeUs = timeKeeper.getLastActualFps() > 0 ? (1_000_000_000.0 / timeKeeper.getLastActualFps()) / 1000.0 : 0.0;
+        double headroomMs = timeKeeper.getLastHeadroomNs() / 1_000_000.0;
+        
+        sv.volcan.core.VolcanLogger.info("METRICS", String.format(
+            "Frame: %d | Time: %.2fus | FPS: %d (Target: %d) | Headroom: %.2fms",
+            totalFrames,
+            frameTimeUs,
+            timeKeeper.getLastActualFps(),
+            timeKeeper.getCurrentTargetFps(),
+            headroomMs
+        ));
+    }
+
+    /**
+     * Halts the main processing loop and triggers a clean shutdown.
+     */
+    public void stop() {
+        this.running = false;
+    }
+
     /**
      * Starts the main engine loop.
      * 

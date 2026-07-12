@@ -72,7 +72,7 @@ public final class VolcanEngineMaster {
         // -------------------------------------------------------------------------
         // UI CONTROL WINDOW
         // -------------------------------------------------------------------------
-        sv.volcan.ui.ServerControlWindow.open();
+        sv.volcan.ui.ServerControlWindow.open(kernel);
 
         // -------------------------------------------------------------------------
         // STEP 3: Execute Kernel on Main Thread (MAX_PRIORITY)

@@ -267,7 +267,23 @@ public final class TimeKeeper {
     }
 
     public long getCurrentTargetFps() { return currentTargetFps; }
+
     public long getLastHeadroomNs() { return lastHeadroomNs; }
+
+    /**
+     * [UI SIGNAL] Activa el modo sin limites de FPS a fuerza bruta
+     */
+    public void activateUnburnerMode() {
+        setTargetFps(UNBOUNDED_FPS);
+    }
+
+    /**
+     * [UI SIGNAL] Restaura el modo dinámico y seguro por defecto (CVT)
+     */
+    public void restoreDefaultMode() {
+        setTargetFps(60);
+    }
+
     public long getLastActualFps() { return lastActualFps; }
 
     private void setTargetFps(long fps) {
