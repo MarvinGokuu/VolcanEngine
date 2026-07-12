@@ -1,0 +1,32 @@
+name: Build and Release Server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-server:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 26
+        uses: actions/setup-java@v4
+        with:
+          java-version: '26'
+          distribution: 'oracle'
+
+      - name: Build Server Runtime (Zero-Debug JPackage)
+        run: |
+          .\build_release.bat
+        shell: cmd
+
+      - name: Upload Server Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VolcanEngine-Server-Runtime
+          path: Volcan-Engine-V1.0/
+          retention-days: 7

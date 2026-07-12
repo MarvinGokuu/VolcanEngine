@@ -1,0 +1,138 @@
+// Reading Order: 01100001
+//  97
+// SPDX-FileCopyrightText: 2026 Marvin Alexander Flores Canales
+// SPDX-License-Identifier: LGPL-3.0-or-later
+package sv.volcan.ecs;
+
+import sv.volcan.core.AAACertified;
+import sv.volcan.scene.VolcanTransformSoA;
+import java.lang.foreign.ValueLayout;
+
+/**
+ * Game API: Hybrid ECS Abstraction (Phase 30).
+ * 
+ * Es la cara orientada a objetos (OOP) que usa el desarrollador de juegos.
+ * No contiene variables de memoria (Cero Heap). Todo se traduce en tiempo real
+ * a lecturas/escrituras en el bloque contiguo de memoria (SoA) a través de FFI.
+ */
+@AAACertified(date = "2026-06-19", maxLatencyNs = 1, minThroughput = 0, lockFree = true, offHeap = true, notes = "OOP Abstraction over pure SoA Data")
+public final class VolcanEntity {
+
+    private final int id;
+    private final VolcanTransformSoA soaMemory;
+    private final VolcanScene scene;
+
+    /**
+     * Instantiated exclusively by VolcanScene.spawnEntity().
+     */
+    VolcanEntity(int id, VolcanTransformSoA soa, VolcanScene scene) {
+        this.id = id;
+        this.soaMemory = soa;
+        this.scene = scene;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    // ==========================================
+    // GAME API: TRANSFORM (64-bit Logic)
+    // ==========================================
+
+    public void setPosition(double x, double y, double z) {
+        int phys = scene.getPhysicalIndex(id);
+        long offset64 = phys * 8L;
+        soaMemory.localPosX.set(ValueLayout.JAVA_DOUBLE, offset64, x);
+        soaMemory.localPosY.set(ValueLayout.JAVA_DOUBLE, offset64, y);
+        soaMemory.localPosZ.set(ValueLayout.JAVA_DOUBLE, offset64, z);
+        
+        soaMemory.globalPosX.set(ValueLayout.JAVA_DOUBLE, offset64, x);
+        soaMemory.globalPosY.set(ValueLayout.JAVA_DOUBLE, offset64, y);
+        soaMemory.globalPosZ.set(ValueLayout.JAVA_DOUBLE, offset64, z);
+        
+        // Sincronizar inmediatamente a VRAM view (32-bit)
+        long offset32 = phys * 4L;
+        soaMemory.posX.set(ValueLayout.JAVA_FLOAT, offset32, (float) x);
+        soaMemory.posY.set(ValueLayout.JAVA_FLOAT, offset32, (float) y);
+        soaMemory.posZ.set(ValueLayout.JAVA_FLOAT, offset32, (float) z);
+    }
+
+    public void setPosition(double x, double y) {
+        setPosition(x, y, getPositionZ());
+    }
+
+    public double getPositionX() {
+        return soaMemory.globalPosX.get(ValueLayout.JAVA_DOUBLE, scene.getPhysicalIndex(id) * 8L);
+    }
+
+    public double getPositionY() {
+        return soaMemory.globalPosY.get(ValueLayout.JAVA_DOUBLE, scene.getPhysicalIndex(id) * 8L);
+    }
+
+    public double getPositionZ() {
+        return soaMemory.globalPosZ.get(ValueLayout.JAVA_DOUBLE, scene.getPhysicalIndex(id) * 8L);
+    }
+
+    public void setVelocity(float vx, float vy, float vz) {
+        long offset = scene.getPhysicalIndex(id) * 4L;
+        soaMemory.velX.set(ValueLayout.JAVA_FLOAT, offset, vx);
+        soaMemory.velY.set(ValueLayout.JAVA_FLOAT, offset, vy);
+        soaMemory.velZ.set(ValueLayout.JAVA_FLOAT, offset, vz);
+    }
+
+    public void setVelocity(float vx, float vy) {
+        setVelocity(vx, vy, getVelocityZ());
+    }
+
+    public float getVelocityX() {
+        return soaMemory.velX.get(ValueLayout.JAVA_FLOAT, scene.getPhysicalIndex(id) * 4L);
+    }
+
+    public float getVelocityY() {
+        return soaMemory.velY.get(ValueLayout.JAVA_FLOAT, scene.getPhysicalIndex(id) * 4L);
+    }
+
+    public float getVelocityZ() {
+        return soaMemory.velZ.get(ValueLayout.JAVA_FLOAT, scene.getPhysicalIndex(id) * 4L);
+    }
+
+    // ==========================================
+    // GAME API: HIERARCHY
+    // ==========================================
+    
+    public void setParent(VolcanEntity parent) {
+        scene.setParent(this.id, parent != null ? parent.getId() : -1);
+    }
+
+    // ==========================================
+    // GAME API: COMPONENT SYSTEM
+    // ==========================================
+
+    public <T extends VolcanComponent> void addComponent(T component) {
+        scene.addComponent(this.id, component);
+    }
+
+    public <T extends VolcanComponent> void removeComponent(Class<T> type) {
+        scene.removeComponent(this.id, type);
+    }
+
+    public <T extends VolcanComponent> T getComponent(Class<T> type) {
+        return scene.getComponent(this.id, type);
+    }
+
+    public boolean hasComponent(Class<? extends VolcanComponent> type) {
+        return scene.hasComponent(this.id, type);
+    }
+
+    // ==========================================
+    // GAME API: LIFECYCLE
+    // ==========================================
+
+    /**
+     * Destruye la entidad, eliminándola del mundo visual y devolviendo su ID al Pool (O(1)).
+     * Esta instancia de VolcanEntity se vuelve inválida después de este llamado.
+     */
+    public void destroy() {
+        scene.destroyEntity(this.id);
+    }
+}
